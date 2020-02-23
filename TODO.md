@@ -5,8 +5,10 @@ GOAL:
  [X] remove the "V 1.1"
  [X] split up the converter script into "converter" and "discord roles"
  [X] get the ranks from streamlabs chatbot (!derps like "True SmuSmu", "NewSmu")
- [ ] put the roles into discord
+    [ ] write the ranks to a json file
+ [X] put the roles into discord
  [ ] assign the roles to people(?)
+ [ ] remember all roles ever created by the bot, so that we can clean up!
 
 PROBLEM:
   streamlabs chatbot scripts WITH discord.py
