@@ -9,7 +9,7 @@ ScriptName = "Calculator"
 Website = "http://www.example.com/todo"
 Description = "Calculator for different units (Celcius, Fahrenheit, kg, lbs, mi, km, inches & cm)"
 Creator = "smu4242"
-Version = "0.0.4"
+Version = "0.0.5"
 
 configFile = "config.json"
 settings = {}
@@ -162,10 +162,16 @@ def Init():
         "response": u"$sourceValue$sourceUnit = $targetValue$targetUnit @$user $fuzzy"
     }
 
-def Execute(data):
+def SendBack(data, message):
+    if data.IsFromDiscord():
+        Parent.SendDiscordMessage(message)
+    else:
+        Parent.SendStreamMessage(message)
+
+def HandleChat(data):
     if data.IsChatMessage() and data.GetParam(0).lower() == settings["command"] and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
         if len(data.GetParam(1).lower()) == 0:
-            Parent.SendStreamMessage("You need to provide the unit (temperature or weight), e.g. 42C, 4242F, 42kg, 42lb")
+            SendBack(data, "You need to provide the unit (temperature or weight), e.g. 42C, 4242F, 42kg, 42lb")
             return
 
         outputMessage = ""
@@ -199,11 +205,11 @@ def Execute(data):
         inputStr = data.GetParam(1).lower() + data.GetParam(2).lower()
         try:
             if len(data.GetParam(1).lower()) == 0:
-                # Parent.SendStreamMessage("You need to provide the temperature, e.g. 42C or 4242F WHY HERE???")
+                # SendBack(data, ("You need to provide the temperature, e.g. 42C or 4242F WHY HERE???")
                 return
             value, sourceValue = findConverter(inputStr)
             if value is None:
-                Parent.SendStreamMessage("This did not work smuDerp Provide a number and then a unit (kg,lb,lbs,F,C,km,mi,cm,in) for example !convert 42kg")
+                SendBack(data, "This did not work smuDerp Provide a number and then a unit (kg,lb,lbs,F,C,km,mi,cm,in) for example !convert 42kg")
                 return
             sourceUnit = value['sourceUnit']
             targetUnit = value['targetUnit']
@@ -223,7 +229,12 @@ def Execute(data):
         outputMessage = outputMessage.replace("$command", settings["command"])
         outputMessage = outputMessage.replace("$fuzzy", fuzzy)
 
-        Parent.SendStreamMessage(outputMessage)
+        SendBack(data, outputMessage)
+
+def Execute(data):
+    if data.IsChatMessage():
+        #SendBack(data, "V 1.1")
+        return HandleChat(data);
     return
 
 def ReloadSettings(jsonData):
