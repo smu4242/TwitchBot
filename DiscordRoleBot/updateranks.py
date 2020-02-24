@@ -9,11 +9,11 @@ import sys
 import asyncio
 import json
 
-client = discord.Client()
+client = discord.Client(fetch_offline_members = True)
 
 @client.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    debug('We have logged in as {0.user}'.format(client))
 
 
 def role_exists(guild, role):
@@ -25,22 +25,47 @@ def role_exists(guild, role):
 
 def read_roles_json():
     with open('./roles.json') as jsonfile:
-        print("reading file inner")
+        debug("reading file inner aaa")
         data = json.load(jsonfile)
-        print(data['roles'])
-        sys.stdout.flush()
+        # debug(data['roles'])
+        # debug(data['users'])
+        # sys.stdout.flush()
         return data
 
 
-@client.event
+def debug(s):
+    print(s)
+    sys.stdout.flush()
+
+
+def getMemberByName(name):
+    return discord.utils.get(message.guild.members, name=name)
+
+
+# @client.event
 async def sync_roles(message):
-    await message.channel.send('Starting!')
-    data = read_roles_json()
-    for role in data['roles']:
-        print("role in json exists? " + str(role_exists(message.guild, role['name'])))
-        if not role_exists(message.guild, role['name']):
-            await message.guild.create_role(name=role['name'], hoist=True, mentionable=False)
-    await message.channel.send('Done!')
+    try:
+        debug("A")
+        await message.channel.send('Starting!')
+        debug("B")
+        data = read_roles_json()
+        # debug("num members:" + str(len(client.users)))
+        # member = discord.utils.get(message.guild.members, name='AmaliRae')
+        # for guildMember in
+        # debug("We got a member!" + str(member))
+        for role in data['roles']:
+            debug("role in json exists? " + str(role_exists(message.guild, role['name'])))
+            if not role_exists(message.guild, role['name']):
+                await message.guild.add_roles(name=role['name'], hoist=True, mentionable=False)
+        for user in data['users']:
+            debug("user in streamlabs:" + user)
+            member = discord.utils.get(message.guild.members, name=user)
+            debug("user in discord:" + str(member))
+        #     await message.guild.assign_role(name=role['name'], hoist=True, mentionable=False)
+        await message.channel.send('Done!')
+    except Exception as e:
+        debug("Unexpected error:", traceback.format_exc())
+        sys.stdout.flush()
 
 
 @client.event
@@ -50,9 +75,10 @@ async def on_message(message):
             # ignore message by ourself!
             return
         if message.content.startswith('!s'):
+            debug("I am ready")
             await sync_roles(message)
     except Exception as e:
-        print("Unexpected error:", traceback.format_exc())
+        debug("Unexpected error:", traceback.format_exc())
         sys.stdout.flush()
 
 
@@ -63,9 +89,5 @@ def readfile(filename):
 
 location = os.path.join(os.path.dirname(__file__), ".discord.token")
 token = readfile(location)
-with open('./roles.json') as jsonfile:
-    print("reading file")
-    print(json.load(jsonfile))
-    sys.stdout.flush()
 client.run(token)
 sys.stdout.flush()
