@@ -12,6 +12,8 @@ Version = "0.0.0"
 configFile = "config.json"
 settings = {}
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 def ScriptToggled(state):
     return
 
@@ -20,9 +22,14 @@ def Init():
 
     settings = {
         "liveOnly": False,
-        "command": "!sync",
+        "command": "!write",
         "permission": "Mod"
     }
+
+
+def writeJsonToFile(jsonBlob, filename):
+    with open(dir_path + "\\" + filename, 'w') as outfile:
+        outfile.write(json.dumps(jsonBlob, indent=4))
 
 
 def SendBack(data, message):
@@ -31,24 +38,40 @@ def SendBack(data, message):
     else:
         Parent.SendStreamMessage(message)
 
+
+def RolesMapToArray(rolesMap):
+    list = []
+    for key, value in rolesMap.iteritems():
+        list.append(value)
+    return list
+
+
 def HandleChat(data):
     # SendBack(data, "DEBUG: " + str(data.User))
-    if data.IsChatMessage() and data.GetParam(0).lower() == settings["command"] and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
+    if (data.IsFromDiscord() or data.IsChatMessage()) and data.GetParam(0).lower() == settings["command"] and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
         outputMessage = ""
         userId = data.User
         username = data.UserName
         points = Parent.GetPoints(userId)
 
-        viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
+        # viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
+        viewers = Parent.GetViewerList()
         viewerRanksMap = {}
+        rolesMap = {}
         for name in viewers:
-            viewerRanksMap[name] = Parent.GetRank(name)
+            rank = Parent.GetRank(name)
+            viewerRanksMap[name] = rank
+            rolesMap[rank] = {"name": rank}
+        fileData = {}
+        fileData['users'] = viewerRanksMap
+        fileData['roles'] = RolesMapToArray(rolesMap)
         SendBack(data, "ranks: " + str(viewerRanksMap.values()))
-
+        # SendBack(data, dir_path)
+        writeJsonToFile(fileData, "roles.json")
         # SendBack(data, outputMessage)
 
 def Execute(data):
-    if data.IsChatMessage():
+    if data.IsChatMessage() or data.IsFromDiscord():
         return HandleChat(data);
     return
 
