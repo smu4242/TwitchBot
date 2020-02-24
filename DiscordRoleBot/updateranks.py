@@ -23,6 +23,13 @@ def role_exists(guild, role):
     return False
 
 
+def getRoleByName(guild, roleName):
+    for r in guild.roles:
+        if str(r) == roleName:
+            return r
+    return None
+
+
 def read_roles_json():
     with open('./roles.json') as jsonfile:
         debug("reading file inner aaa")
@@ -38,30 +45,40 @@ def debug(s):
     sys.stdout.flush()
 
 
-def getMemberByName(name):
-    return discord.utils.get(message.guild.members, name=name)
+def compareName(m):
+    debug("comparing: " + m.nick)
+    return m.name.lower() == name.lower() or m.nick.lower() == name.lower()
 
+def getMemberByName(guild, name):
+    # return discord.utils.get(message.guild.members, name=name)
+    return discord.utils.find(lambda m: (m.name.lower() == name.lower()) or (m.nick and (m.nick.lower() == name.lower())), guild.members)
 
 # @client.event
 async def sync_roles(message):
     try:
-        debug("A")
         await message.channel.send('Starting!')
-        debug("B")
         data = read_roles_json()
-        # debug("num members:" + str(len(client.users)))
-        # member = discord.utils.get(message.guild.members, name='AmaliRae')
-        # for guildMember in
+        # member = getMemberByName(message.guild, 'amalIraE')
         # debug("We got a member!" + str(member))
+        discordRoles = {}
         for role in data['roles']:
             debug("role in json exists? " + str(role_exists(message.guild, role['name'])))
-            if not role_exists(message.guild, role['name']):
+            roleName = role['name']
+            discordRole = getRoleByName(message.guild, roleName)
+            if not discordRole:
                 await message.guild.add_roles(name=role['name'], hoist=True, mentionable=False)
+            discordRoles[roleName] = discordRole
         for user in data['users']:
+            roleName = data['users'][user]
             debug("user in streamlabs:" + user)
-            member = discord.utils.get(message.guild.members, name=user)
-            debug("user in discord:" + str(member))
-        #     await message.guild.assign_role(name=role['name'], hoist=True, mentionable=False)
+            discordMember = getMemberByName(message.guild, user)
+            if discordMember:
+                discordRole = discordRoles[roleName]
+                debug("user in discord:" + str(discordMember) + " will get role " + str(discordRole))
+                await discordMember.add_roles(discordRole, reason="update ranks script 1")
+                debug("A")
+            debug("B")
+        debug("C")
         await message.channel.send('Done!')
     except Exception as e:
         debug("Unexpected error:", traceback.format_exc())
