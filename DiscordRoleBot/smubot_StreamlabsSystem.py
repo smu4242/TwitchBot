@@ -3,8 +3,6 @@
 import json
 import os
 
-import discord
-
 ScriptName = "DiscordRoleBot"
 Website = "http://www.example.com/todo"
 Description = "Read roles from Streamlabs Chatbot and put them into discord."
