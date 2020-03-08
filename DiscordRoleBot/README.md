@@ -1,7 +1,10 @@
 # DiscordRoleBot
 Read roles from Streamlabs Chatbot and put them into discord.
 To run it:
-start ./updateranks
+./updateranks.py
+
+The following part can still be done manually, but also runs every 5 minutes automatically, assuming streamlabs chatbot is running:
+
 go to discord #test123
 type in discord:
 !write

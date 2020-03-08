@@ -38,11 +38,7 @@ def getRoleByName(guild, roleName):
 
 def read_roles_json():
     with open('./roles.json') as jsonfile:
-        debug("reading file inner aaa")
         data = json.load(jsonfile)
-        # debug(data['roles'])
-        # debug(data['users'])
-        # sys.stdout.flush()
         return data
 
 

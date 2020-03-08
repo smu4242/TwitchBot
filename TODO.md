@@ -6,9 +6,9 @@ current there is only 1 script for the converter (!convert command)
   - [x] make a backup everytime we write the json file
   - [x] read the file, add data, write the file
 - [x] streamlabs bot and discord bot are separated! We need to make sure that whenever the streamlabs bot is active, the discord bot reads its file!
+- [x] run the bot repeatedly while I'm live
 - [ ] remember all roles ever created by the bot, so that we can clean up!
 - [ ] sort the rank list by rank hierarchy
-- [ ] run the bot repeatedly while I'm live
 - [ ] remove dyno.gg bot
 
 SOLUTION 1:

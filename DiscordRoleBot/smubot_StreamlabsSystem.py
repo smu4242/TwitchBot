@@ -4,7 +4,7 @@ import json
 import os
 import os.path
 from datetime import datetime
-
+import threading
 
 ScriptName = "DiscordRoleBot"
 Website = "http://www.example.com/todo"
@@ -28,7 +28,21 @@ def Init():
         "command": "!write",
         "permission": "Mod"
     }
+    onTimer()
 
+class FakeData:
+	"This is my second class"
+	def IsFromDiscord(self):
+		return True
+
+
+def onTimer():
+    data = FakeData()
+    SendBack(data, "I am a timer!")
+    OnWriteCommand(data)
+    thread = threading.Timer(5 * 60.0, onTimer)
+    thread.daemon = True
+    thread.start()
 
 def moveFile(existingFilename, newFilename):
     os.rename(existingFilename, newFilename)
@@ -55,46 +69,48 @@ def RolesMapToArray(rolesMap):
         list.append(value)
     return list
 
+def OnWriteCommand(data):
+    outputMessage = ""
+    # userId = data.User
+    # username = data.UserName
+    # points = Parent.GetPoints(userId)
+
+    filename = dir_path + "\\" + "roles.json"
+    existingData = readJsonFromFileIfExists(filename)
+    viewerRanksMap = {}
+    rolesMap = {}
+    for role in existingData['roles']:
+        rank = role['name']
+        rolesMap[rank] = {"name": rank}
+    for name in existingData['users']:
+        rank = existingData['users'][name]
+        viewerRanksMap[name] = rank
+
+    # viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
+    viewers = Parent.GetViewerList()
+    for name in viewers:
+        rank = Parent.GetRank(name)
+        viewerRanksMap[name] = rank
+        rolesMap[rank] = {"name": rank}
+    fileData = {}
+    fileData['users'] = viewerRanksMap
+    fileData['roles'] = RolesMapToArray(rolesMap)
+    # SendBack(data, "ranks: " + str(viewerRanksMap.values()))
+    # SendBack(data, dir_path)
+
+    now = datetime.now()
+    newFilename = filename + now.strftime("%m_%d_%Y__%H_%M_%S") + ".json"
+    if os.path.isfile(filename):
+        moveFile(filename, newFilename)
+
+    writeJsonToFile(fileData, filename)
+    SendBack(data, "Done writing file!")
+    SendBack(data, "!s")
+
 
 def HandleChat(data):
     if (data.IsFromDiscord() or data.IsChatMessage()) and data.GetParam(0).lower() == settings["command"] and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
-        outputMessage = ""
-        userId = data.User
-        username = data.UserName
-        points = Parent.GetPoints(userId)
-
-        filename = dir_path + "\\" + "roles.json"
-        existingData = readJsonFromFileIfExists(filename)
-        viewerRanksMap = {}
-        rolesMap = {}
-        for role in existingData['roles']:
-            rank = role['name']
-            rolesMap[rank] = {"name": rank}
-        for name in existingData['users']:
-            rank = existingData['users'][name]
-            viewerRanksMap[name] = rank
-        SendBack(data, "viewerRanksMap: " + str(viewerRanksMap))
-
-        # viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
-        viewers = Parent.GetViewerList()
-        for name in viewers:
-            rank = Parent.GetRank(name)
-            viewerRanksMap[name] = rank
-            rolesMap[rank] = {"name": rank}
-        fileData = {}
-        fileData['users'] = viewerRanksMap
-        fileData['roles'] = RolesMapToArray(rolesMap)
-        # SendBack(data, "ranks: " + str(viewerRanksMap.values()))
-        # SendBack(data, dir_path)
-
-        now = datetime.now()
-        newFilename = filename + now.strftime("%m_%d_%Y__%H_%M_%S") + ".json"
-        if os.path.isfile(filename):
-            moveFile(filename, newFilename)
-
-        writeJsonToFile(fileData, filename)
-        SendBack(data, "Done writing file!")
-        SendBack(data, "!s")
+        OnWriteCommand(data)
 
 def Execute(data):
     if data.IsChatMessage() or data.IsFromDiscord():
