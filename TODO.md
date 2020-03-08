@@ -5,9 +5,12 @@ current there is only 1 script for the converter (!convert command)
 - [x] assign the roles to people(?)
   - [x] write the people in the json file (streamlabs bot)
   - [x] read the people from the json file (discord bot)
+- [ ] make is so that writing the json file does not remove previous entries!
 - [ ] streamlabs bot and discord bot are seperated! We need to make sure that whenever the streamlabs bot is active, the discord bot reads its file!
 - [ ] remember all roles ever created by the bot, so that we can clean up!
 - [ ] sort the rank list by rank hierarchy
+- [ ] run the bot repeatedly while I'm live
+- [ ] remove dyno.gg bot
 
 SOLUTION 1:
  streamlabs chatbot (in py 2) just calls another scripts to create the roles
@@ -19,3 +22,16 @@ SOLUTION 1:
 - [X] split up the converter script into "converter" and "discord roles"
 - [X] put the roles into discord
 - [X] get the ranks from streamlabs chatbot (!derps like "True SmuSmu", "NewSmu")
+
+
+# Ideas for later
+- [ ] a key input - type in chat and that gets send as key input to the streamer LOL
+- [ ] make a "speedmeter" that shows how nice chat is. AI?
+  - this could be for some different input as well, like twitter
+
+- [ ] SOMETHING with evolution in it
+
+- [ ] A game that integrates with twitch somehow - kinda like twitch plays
+    * maybe something with a grid, so that it's easy to type coordinates
+    * maybe something where the streamer/AI needs to escape a maze and the viewers stop them
+    * maybe minecraft tetris?
