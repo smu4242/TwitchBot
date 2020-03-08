@@ -2,10 +2,10 @@
 current there is only 1 script for the converter (!convert command)
 
 # Current GOAL:
-- [ ] make it so that writing the json file does not remove previous entries!
+- [x] make it so that writing the json file does not remove previous entries!
   - [x] make a backup everytime we write the json file
-  - [ ] read the file, add data, write the file
-- [ ] streamlabs bot and discord bot are seperated! We need to make sure that whenever the streamlabs bot is active, the discord bot reads its file!
+  - [x] read the file, add data, write the file
+- [x] streamlabs bot and discord bot are separated! We need to make sure that whenever the streamlabs bot is active, the discord bot reads its file!
 - [ ] remember all roles ever created by the bot, so that we can clean up!
 - [ ] sort the rank list by rank hierarchy
 - [ ] run the bot repeatedly while I'm live

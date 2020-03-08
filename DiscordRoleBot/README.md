@@ -6,7 +6,7 @@ go to discord #test123
 type in discord:
 !write
 this should create a file roles.json
-then type in discord
+then the *bot* types in discord
 !s
 this should create missing roles and assign roles to people in discord
 then, we still need to manually sort the roles in discord

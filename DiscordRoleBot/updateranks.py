@@ -62,7 +62,7 @@ def getMemberByName(guild, name):
 # @client.event
 async def sync_roles(message):
     try:
-        await message.channel.send('Starting!')
+        await message.channel.send('updateranks starting!')
         data = read_roles_json()
         # member = getMemberByName(message.guild, 'amalIraE')
         # debug("We got a member!" + str(member))
@@ -94,12 +94,12 @@ async def sync_roles(message):
 @client.event
 async def on_message(message):
     try:
+        if message.content.startswith('!s'):
+            debug("Received !s")
+            await sync_roles(message)
         if message.author == client.user:
             # ignore message by ourself!
             return
-        if message.content.startswith('!s'):
-            debug("I am ready")
-            await sync_roles(message)
     except Exception as e:
         debug("Unexpected error:", traceback.format_exc())
         sys.stdout.flush()

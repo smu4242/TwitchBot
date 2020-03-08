@@ -37,6 +37,10 @@ def writeJsonToFile(jsonBlob, filename):
     with open(filename, 'w') as outfile:
         outfile.write(json.dumps(jsonBlob, indent=4))
 
+def readJsonFromFileIfExists(filename):
+    with open(filename) as jsonfile:
+        data = json.load(jsonfile)
+        return data
 
 def SendBack(data, message):
     if data.IsFromDiscord():
@@ -53,17 +57,26 @@ def RolesMapToArray(rolesMap):
 
 
 def HandleChat(data):
-    # SendBack(data, "DEBUG: " + str(data.User))
     if (data.IsFromDiscord() or data.IsChatMessage()) and data.GetParam(0).lower() == settings["command"] and Parent.HasPermission(data.User, settings["permission"], "") and ((settings["liveOnly"] and Parent.IsLive()) or (not settings["liveOnly"])):
         outputMessage = ""
         userId = data.User
         username = data.UserName
         points = Parent.GetPoints(userId)
 
-        # viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
-        viewers = Parent.GetViewerList()
+        filename = dir_path + "\\" + "roles.json"
+        existingData = readJsonFromFileIfExists(filename)
         viewerRanksMap = {}
         rolesMap = {}
+        for role in existingData['roles']:
+            rank = role['name']
+            rolesMap[rank] = {"name": rank}
+        for name in existingData['users']:
+            rank = existingData['users'][name]
+            viewerRanksMap[name] = rank
+        SendBack(data, "viewerRanksMap: " + str(viewerRanksMap))
+
+        # viewers = Parent.GetActiveUsers() # TODO These are only the ACTIVE viewers! maybe get all viewers?
+        viewers = Parent.GetViewerList()
         for name in viewers:
             rank = Parent.GetRank(name)
             viewerRanksMap[name] = rank
@@ -74,15 +87,14 @@ def HandleChat(data):
         # SendBack(data, "ranks: " + str(viewerRanksMap.values()))
         # SendBack(data, dir_path)
 
-        filename = dir_path + "\\" + "roles.json"
         now = datetime.now()
         newFilename = filename + now.strftime("%m_%d_%Y__%H_%M_%S") + ".json"
-        SendBack(data, "trying to move file: " + filename + " -> " + newFilename + " was there: " + str(os.path.isfile(filename)))
         if os.path.isfile(filename):
             moveFile(filename, newFilename)
 
         writeJsonToFile(fileData, filename)
-        # SendBack(data, outputMessage)
+        SendBack(data, "Done writing file!")
+        SendBack(data, "!s")
 
 def Execute(data):
     if data.IsChatMessage() or data.IsFromDiscord():
