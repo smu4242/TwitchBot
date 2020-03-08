@@ -2,6 +2,9 @@
 
 import json
 import os
+import os.path
+from datetime import datetime
+
 
 ScriptName = "DiscordRoleBot"
 Website = "http://www.example.com/todo"
@@ -27,8 +30,11 @@ def Init():
     }
 
 
+def moveFile(existingFilename, newFilename):
+    os.rename(existingFilename, newFilename)
+
 def writeJsonToFile(jsonBlob, filename):
-    with open(dir_path + "\\" + filename, 'w') as outfile:
+    with open(filename, 'w') as outfile:
         outfile.write(json.dumps(jsonBlob, indent=4))
 
 
@@ -65,9 +71,17 @@ def HandleChat(data):
         fileData = {}
         fileData['users'] = viewerRanksMap
         fileData['roles'] = RolesMapToArray(rolesMap)
-        SendBack(data, "ranks: " + str(viewerRanksMap.values()))
+        # SendBack(data, "ranks: " + str(viewerRanksMap.values()))
         # SendBack(data, dir_path)
-        writeJsonToFile(fileData, "roles.json")
+
+        filename = dir_path + "\\" + "roles.json"
+        now = datetime.now()
+        newFilename = filename + now.strftime("%m_%d_%Y__%H_%M_%S") + ".json"
+        SendBack(data, "trying to move file: " + filename + " -> " + newFilename + " was there: " + str(os.path.isfile(filename)))
+        if os.path.isfile(filename):
+            moveFile(filename, newFilename)
+
+        writeJsonToFile(fileData, filename)
         # SendBack(data, outputMessage)
 
 def Execute(data):
