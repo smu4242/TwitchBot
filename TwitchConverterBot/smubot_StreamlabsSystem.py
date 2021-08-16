@@ -158,7 +158,7 @@ def Init():
         "userCooldown": 1,
         "onCooldown": "$user, $command is still on cooldown for $cd minutes!",
         "onUserCooldown": "$user $command is still on user cooldown for $cd minutes!",
-        "responseNotEnoughPoints": "$user you have only $points $currency to convert things smuDerp",
+        "responseNotEnoughPoints": "$user you have only $points $currency to convert things smuConfused",
         "response": u"$sourceValue$sourceUnit = $targetValue$targetUnit @$user $fuzzy"
     }
 
@@ -209,7 +209,7 @@ def HandleChat(data):
                 return
             value, sourceValue = findConverter(inputStr)
             if value is None:
-                SendBack(data, "This did not work smuDerp Provide a number and then a unit (kg,lb,lbs,F,C,km,mi,cm,in) for example !convert 42kg")
+                SendBack(data, "This did not work smuConfused Provide a number and then a unit (kg,lb,lbs,F,C,km,mi,cm,in) for example !convert 42kg")
                 return
             sourceUnit = value['sourceUnit']
             targetUnit = value['targetUnit']
