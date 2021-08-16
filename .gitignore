@@ -1,3 +1,4 @@
 DiscordRoleBot/.discord.token
-DiscordRoleBot/roles.json
+DiscordRoleBot/roles*.json
+DiscordRoleBot/old/
 get-pip.py
