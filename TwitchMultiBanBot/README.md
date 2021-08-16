@@ -1,6 +1,9 @@
 # MultiBan
 A Script for Streamlabs Chatbot to ease banning multiple accounts at once.
 
+# Why?
+Because twitch is too slow when it comes to protecting marginalized creators. [Please read this petition for more details, and sign it too](https://www.change.org/p/amazon-twitch-do-better-stop-hate-raids-against-people-of-color-and-marginalized-creators).
+
 ## What does it do?
 Once installed, entering
 `!multiban 3`
