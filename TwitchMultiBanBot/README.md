@@ -4,6 +4,11 @@ A Script for Streamlabs Chatbot to ease banning multiple accounts at once.
 # Why?
 Because twitch is too slow when it comes to protecting marginalized creators. [Please read this petition for more details, and sign it too](https://www.change.org/p/amazon-twitch-do-better-stop-hate-raids-against-people-of-color-and-marginalized-creators).
 
+# Other tools
+This tool is in a very early stage and only works on one specific case.
+
+There are other tools for mass-banning that you might want to take a look at, e.g. [CommanderRoot](https://twitch-tools.rootonline.de/blocklist_manager.php#).
+
 ## What does it do?
 Once installed, entering
 `!multiban 3`
@@ -17,6 +22,8 @@ it will actually ban people.
 The time starts new with every command.
 If you first just get a list of names to check, and take a minute to read them,
 you need to add one minute when issueing the actual ban.
+
+
 
 
 ## How it works
